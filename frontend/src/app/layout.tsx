@@ -106,7 +106,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <QueryClientProvider client={queryClient}>
-            <RequiredAuthProvider authUrl={process.env.NEXT_PUBLIC_AUTH_URL!}>
+            <RequiredAuthProvider authUrl={process.env.NEXT_PUBLIC_AUTH_URL || 'https://placeholder.propelauthtest.com'}>
               <MetaInfoProvider>
                 <SidebarProvider>
                   <AppSidebar />
