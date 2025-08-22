@@ -1,0 +1,54 @@
+name: Deploy to Coolify
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy-frontend:
+    runs-on: ubuntu-latest
+    if: contains(github.event.head_commit.modified, 'frontend/') || contains(github.event.head_commit.added, 'frontend/')
+    steps:
+      - name: Deploy Frontend to Coolify
+        run: |
+          if [ -z "${{ secrets.COOLIFY_FRONTEND_DEPLOY_HOOK }}" ]; then
+            echo "Missing COOLIFY_FRONTEND_DEPLOY_HOOK secret"
+            exit 1
+          fi
+          echo "Deploying frontend to Coolify..."
+          curl -fsSL -X POST "${{ secrets.COOLIFY_FRONTEND_DEPLOY_HOOK }}"
+          echo "Frontend deployment triggered successfully!"
+
+  deploy-backend:
+    runs-on: ubuntu-latest
+    if: contains(github.event.head_commit.modified, 'backend/') || contains(github.event.head_commit.added, 'backend/')
+    steps:
+      - name: Deploy Backend to Coolify
+        run: |
+          if [ -z "${{ secrets.COOLIFY_BACKEND_DEPLOY_HOOK }}" ]; then
+            echo "Missing COOLIFY_BACKEND_DEPLOY_HOOK secret"
+            exit 1
+          fi
+          echo "Deploying backend to Coolify..."
+          curl -fsSL -X POST "${{ secrets.COOLIFY_BACKEND_DEPLOY_HOOK }}"
+          echo "Backend deployment triggered successfully!"
+
+  deploy-all:
+    runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.head_commit.modified, 'frontend/') && !contains(github.event.head_commit.modified, 'backend/') && !contains(github.event.head_commit.added, 'frontend/') && !contains(github.event.head_commit.added, 'backend/') }}
+    steps:
+      - name: Deploy Both Services to Coolify
+        run: |
+          echo "Deploying both frontend and backend to Coolify..."
+          
+          if [ -n "${{ secrets.COOLIFY_FRONTEND_DEPLOY_HOOK }}" ]; then
+            echo "Triggering frontend deployment..."
+            curl -fsSL -X POST "${{ secrets.COOLIFY_FRONTEND_DEPLOY_HOOK }}"
+          fi
+          
+          if [ -n "${{ secrets.COOLIFY_BACKEND_DEPLOY_HOOK }}" ]; then
+            echo "Triggering backend deployment..."
+            curl -fsSL -X POST "${{ secrets.COOLIFY_BACKEND_DEPLOY_HOOK }}"
+          fi
+          
+          echo "Deployment triggered successfully!"
