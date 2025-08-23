@@ -75,6 +75,13 @@ services:
       - ./mock/propelauth_fastapi_mock.py:/workdir/.venv/lib/python3.12/site-packages/propelauth_fastapi/__init__.py
     ports:
       - "8000:8000"
+    # Traefik labels for production deployment
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`acidevbackend.realsolutions.live`)"
+      - "traefik.http.routers.backend.entrypoints=websecure"
+      - "traefik.http.routers.backend.tls.certresolver=letsencrypt"
+      - "traefik.http.services.backend.loadbalancer.server.port=8000"
     # this overrides the default CMD specified in the Dockerfile, use this for local development
     command: uvicorn aci.server.main:app --proxy-headers --forwarded-allow-ips=* --host 0.0.0.0 --port 8000 --reload --no-access-log
     depends_on:
