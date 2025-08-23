@@ -34,6 +34,8 @@ const Page = () => {
   const apiKey = activeProject ? getApiKey(activeProject) : "";
 
   const getMessagesFromLocalStorage = () => {
+    if (typeof window === 'undefined') return [];
+    
     const storedMessages = sessionStorage.getItem(chatHistoryLocalStorageKey);
     if (storedMessages) {
       try {
@@ -76,10 +78,12 @@ const Page = () => {
   });
 
   useEffect(() => {
-    sessionStorage.setItem(
-      chatHistoryLocalStorageKey,
-      JSON.stringify(messages),
-    );
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem(
+        chatHistoryLocalStorageKey,
+        JSON.stringify(messages),
+      );
+    }
   }, [messages]);
   const handleAddToolResult = ({
     toolCallId,
@@ -92,7 +96,9 @@ const Page = () => {
   };
 
   const handleClearMessages = () => {
-    sessionStorage.removeItem(chatHistoryLocalStorageKey);
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem(chatHistoryLocalStorageKey);
+    }
     setMessages([]);
   };
 

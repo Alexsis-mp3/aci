@@ -80,7 +80,7 @@ export const MetaInfoProvider = withRequiredAuthInfo<MetaInfoProviderProps>(
     }, [orgs]);
 
     useEffect(() => {
-      if (projects.length > 0) {
+      if (projects.length > 0 && typeof window !== 'undefined') {
         const savedProjectId = localStorage.getItem(
           `activeProject_${activeOrg?.orgId}`,
         );
@@ -93,7 +93,7 @@ export const MetaInfoProvider = withRequiredAuthInfo<MetaInfoProviderProps>(
     }, [projects, activeOrg]);
 
     useEffect(() => {
-      if (activeProject && activeOrg) {
+      if (activeProject && activeOrg && typeof window !== 'undefined') {
         localStorage.setItem(
           `activeProject_${activeOrg.orgId}`,
           activeProject.id,
