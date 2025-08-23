@@ -46,12 +46,7 @@ services:
       - SERVER_STRIPE_WEBHOOK_SIGNING_SECRET=${SERVER_STRIPE_WEBHOOK_SIGNING_SECRET}
       - LOGFIRE_WRITE_TOKEN=${LOGFIRE_WRITE_TOKEN}
       - ENVIRONMENT=${ENVIRONMENT:-production}
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=Host(`acidevbackend.realsolutions.live`)"
-      - "traefik.http.routers.backend.entrypoints=websecure"
-      - "traefik.http.routers.backend.tls.certresolver=letsencrypt"
-      - "traefik.http.services.backend.loadbalancer.server.port=8000"
+
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/v1/health"]
       interval: 30s
